@@ -1,7 +1,7 @@
 
 import java.util.ArrayList;
 import javax.swing.table.DefaultTableModel;
-
+import javax.swing.JOptionPane;
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
@@ -135,12 +135,53 @@ public class listagemVIEW extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnVenderActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVenderActionPerformed
-        String id = id_produto_venda.getText();
-        
+                                            
+                                         
+
+    String id = JOptionPane.showInputDialog(
+        this,
+        "Digite o ID do produto que deseja vender:"
+    );
+
+    if (id == null || id.trim().isEmpty()) {
+        return;
+    }
+
+    try {
+
+        int codigo = Integer.parseInt(id);
+
         ProdutosDAO produtosdao = new ProdutosDAO();
-        
-        //produtosdao.venderProduto(Integer.parseInt(id));
-        listarProdutos();
+
+        boolean sucesso = produtosdao.venderProduto(codigo);
+
+        if (sucesso) {
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Produto vendido com sucesso!"
+            );
+
+            listarProdutos();
+
+        } else {
+
+            JOptionPane.showMessageDialog(
+                this,
+                "Produto não encontrado."
+            );
+        }
+
+    } catch (NumberFormatException erro) {
+
+        JOptionPane.showMessageDialog(
+            this,
+            "Digite um ID válido."
+        );
+    }
+
+
+
     }//GEN-LAST:event_btnVenderActionPerformed
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
