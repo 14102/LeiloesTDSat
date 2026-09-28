@@ -186,48 +186,8 @@ public class listagemVIEW extends javax.swing.JFrame {
 
     private void btnVendasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnVendasActionPerformed
                                                 
-    String codigo = JOptionPane.showInputDialog(
-            this,
-            "Digite o ID do produto que deseja vender:"
-    );
-
-    if (codigo == null || codigo.trim().isEmpty()) {
-        return;
-    }
-
-    try {
-
-        int id = Integer.parseInt(codigo);
-
-        ProdutosDAO produtosdao = new ProdutosDAO();
-
-        boolean vendido = produtosdao.venderProduto(id);
-
-        if (vendido) {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Produto vendido com sucesso!"
-            );
-
-            listarProdutos();
-
-        } else {
-
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Produto não encontrado."
-            );
-        }
-
-    } catch (NumberFormatException e) {
-
-        JOptionPane.showMessageDialog(
-                this,
-                "Digite um ID válido."
-        );
-
-    }
+   vendasVIEW telaVendas = new vendasVIEW();
+    telaVendas.setVisible(true);
 
     }//GEN-LAST:event_btnVendasActionPerformed
 
