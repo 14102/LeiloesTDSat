@@ -1,191 +1,132 @@
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 
 public class ProdutosDAO {
 
     Connection conn;
-    PreparedStatement prep;
-    ResultSet resultset;
+    PreparedStatement pstm;
+    ResultSet rs;
 
-    // ==============================
     // CADASTRAR PRODUTO
-    // ==============================
     public boolean cadastrarProduto(ProdutosDTO produto) {
-
-        conn = new conectaDAO().connectDB();
-
-        if (conn == null) {
-            JOptionPane.showMessageDialog(
-                null,
-                "ERRO: Não foi possível conectar ao banco uc11."
-            );
-            return false;
-        }
 
         String sql = "INSERT INTO produtos (nome, valor, status) VALUES (?, ?, ?)";
 
         try {
 
-            prep = conn.prepareStatement(sql);
+            conn = new conectaDAO().connectDB();
 
-            prep.setString(1, produto.getNome());
-            prep.setInt(2, produto.getValor());
-            prep.setString(3, produto.getStatus());
+            pstm = conn.prepareStatement(sql);
 
-            int resultado = prep.executeUpdate();
+            pstm.setString(1, produto.getNome());
+            pstm.setInt(2, produto.getValor());
+            pstm.setString(3, produto.getStatus());
 
-            prep.close();
-            conn.close();
+            pstm.executeUpdate();
 
-            return resultado > 0;
+            return true;
 
-        } catch (SQLException erro) {
+        } catch (Exception e) {
 
-            JOptionPane.showMessageDialog(
-                null,
-                "ERRO AO CADASTRAR:\n" + erro.getMessage()
-            );
-
+            e.printStackTrace();
             return false;
         }
     }
 
-    // ==============================
     // LISTAR TODOS OS PRODUTOS
-    // ==============================
     public ArrayList<ProdutosDTO> listarProdutos() {
 
         ArrayList<ProdutosDTO> lista = new ArrayList<>();
 
-        String sql = "SELECT id, nome, valor, status FROM produtos";
+        String sql = "SELECT * FROM produtos";
 
         try {
 
             conn = new conectaDAO().connectDB();
 
-            if (conn == null) {
-                return lista;
-            }
+            pstm = conn.prepareStatement(sql);
 
-            prep = conn.prepareStatement(sql);
-            resultset = prep.executeQuery();
+            rs = pstm.executeQuery();
 
-            while (resultset.next()) {
+            while (rs.next()) {
 
                 ProdutosDTO produto = new ProdutosDTO();
 
-                produto.setId(resultset.getInt("id"));
-                produto.setNome(resultset.getString("nome"));
-                produto.setValor(resultset.getInt("valor"));
-                produto.setStatus(resultset.getString("status"));
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
 
                 lista.add(produto);
             }
 
-            resultset.close();
-            prep.close();
-            conn.close();
+        } catch (Exception e) {
 
-        } catch (SQLException erro) {
-
-            JOptionPane.showMessageDialog(
-                null,
-                "Erro ao listar produtos:\n" + erro.getMessage()
-            );
+            e.printStackTrace();
         }
 
         return lista;
     }
 
-    // ==============================
     // VENDER PRODUTO
-    // ==============================
-    public boolean venderProduto(int id) {
-
-        conn = new conectaDAO().connectDB();
-
-        if (conn == null) {
-            return false;
-        }
+    public boolean venderProduto(int codigo) {
 
         String sql = "UPDATE produtos SET status = ? WHERE id = ?";
 
         try {
 
-            prep = conn.prepareStatement(sql);
+            conn = new conectaDAO().connectDB();
 
-            prep.setString(1, "Vendido");
-            prep.setInt(2, id);
+            pstm = conn.prepareStatement(sql);
 
-            int resultado = prep.executeUpdate();
+            pstm.setString(1, "Vendido");
+            pstm.setInt(2, codigo);
 
-            prep.close();
-            conn.close();
+            int resultado = pstm.executeUpdate();
 
             return resultado > 0;
 
-        } catch (SQLException erro) {
+        } catch (Exception e) {
 
-            JOptionPane.showMessageDialog(
-                null,
-                "Erro ao vender produto:\n" + erro.getMessage()
-            );
-
+            e.printStackTrace();
             return false;
         }
     }
 
-    // ==============================
-    // LISTAR PRODUTOS VENDIDOS
-    // ==============================
+    // LISTAR SOMENTE PRODUTOS VENDIDOS
     public ArrayList<ProdutosDTO> listarProdutosVendidos() {
 
         ArrayList<ProdutosDTO> lista = new ArrayList<>();
 
-        String sql =
-            "SELECT id, nome, valor, status FROM produtos WHERE status = ?";
+        String sql = "SELECT * FROM produtos WHERE status = ?";
 
         try {
 
             conn = new conectaDAO().connectDB();
 
-            if (conn == null) {
-                return lista;
-            }
+            pstm = conn.prepareStatement(sql);
 
-            prep = conn.prepareStatement(sql);
+            pstm.setString(1, "Vendido");
 
-            prep.setString(1, "Vendido");
+            rs = pstm.executeQuery();
 
-            resultset = prep.executeQuery();
-
-            while (resultset.next()) {
+            while (rs.next()) {
 
                 ProdutosDTO produto = new ProdutosDTO();
 
-                produto.setId(resultset.getInt("id"));
-                produto.setNome(resultset.getString("nome"));
-                produto.setValor(resultset.getInt("valor"));
-                produto.setStatus(resultset.getString("status"));
+                produto.setId(rs.getInt("id"));
+                produto.setNome(rs.getString("nome"));
+                produto.setValor(rs.getInt("valor"));
+                produto.setStatus(rs.getString("status"));
 
                 lista.add(produto);
             }
 
-            resultset.close();
-            prep.close();
-            conn.close();
+        } catch (Exception e) {
 
-        } catch (SQLException erro) {
-
-            JOptionPane.showMessageDialog(
-                null,
-                "Erro ao listar produtos vendidos:\n"
-                + erro.getMessage()
-            );
+            e.printStackTrace();
         }
 
         return lista;
